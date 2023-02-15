@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  api:
+    build: .
+    restart: always
+    hostname: api
+    environment:
+      - PORT=${PORT}
+      - POSTGRES_HOST=database
+      - POSTGRES_PORT=5432
+      - POSTGRES_USERNAME=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DATABASE=${POSTGRES_DATABASE}
+    ports:
+      - 3001:${PORT}
+    networks:
+      - backend
+  database:
+    image: 'postgres:latest'
+    restart: always
+    environment:
+      - POSTGRES_USERNAME=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d/
+    ports:
+      - 5432:5432
+    networks:
+      - backend
+networks:
+  backend:
+    driver: bridge
